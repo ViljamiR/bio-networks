@@ -4,7 +4,7 @@ import math
 
 from gillespie import gillespie
 from CLE import CLE
-#from poisson_approx import poisson_approx
+from poisson_approx import poisson_approx
 
 
 def main():
@@ -12,16 +12,20 @@ def main():
     #T1, X1 = gillespie(S,M,LV_hazards, c,t_max=30, max_reactions=int(1e5))
     # plot_result(T1,X1)
 
-    Nt = 500
-    T, X1 = CLE(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
+    # Nt = 500
+    # T, X1 = CLE(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
+    # plot_result(T, X1)
+
+    Nt = 1000
+    T, X1 = poisson_approx(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
     plot_result(T, X1)
 
 
 def plot_result(T, X):
     """Visualize a Lotka-Volterra simulation result. 
 
-    :param T: First return value of the 'gillespie' function.
-    :param X: Second return value of the 'gillespie' function.
+    :param T: Time step vector
+    :param X: State vector
     :return: Nothing.
     """
     plt.figure(figsize=(10, 6))
