@@ -1,3 +1,4 @@
+import numpy as np
 # Copied from exercise 3 
 def CLE(S, M, h, c, T):
     """ Simulates the diffusion approximation

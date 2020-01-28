@@ -17,7 +17,7 @@ def gillespie(S, M, h, c, t_max, max_reactions):
   
   for idx in range(0, 10^5):
     T[idx] = current_time
-    X[idx] = current_state
+    X[idx, :] = current_state
 
     # Both species are extinct if sum of state is 0
     if sum(current_state)==0:
@@ -40,5 +40,10 @@ def gillespie(S, M, h, c, t_max, max_reactions):
     reaction_index = np.random.choice(a=V, replace=True, p=rates / lambd)
 
     current_state = current_state + S[:, reaction_index].flatten()
+
+  T = T[0:idx]
+  X = X[0:idx, :]
+
+  return T, X
 
     
