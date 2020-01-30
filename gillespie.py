@@ -15,7 +15,7 @@ def gillespie(S, M, h, c, t_max, max_reactions):
   current_state = M
   current_time = 0.0
   
-  for idx in range(0, 10^5):
+  for idx in range(0, max_reactions):
     T[idx] = current_time
     X[idx, :] = current_state
 
