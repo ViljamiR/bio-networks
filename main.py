@@ -5,6 +5,8 @@ import math
 from gillespie import gillespie
 from DSM import deterministic_simulation
 from DSM import odefun
+from DSM import dimerisation_kinetics_odefun_stochastic
+from DSM import dimerisation_kinetics_odefun_deterministic
 from CLE import CLE
 #from poisson_approx import poisson_approx
 
@@ -17,12 +19,21 @@ def main():
     #Nt = 500
     #T, X1 = CLE(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
     #plot_result(T, X1)
-    X_init = np.array([1, 1.5])
+
+    #X_init = np.array([1, 1.5])
+    #T_max = 12
+    #step_size = 0.01
+    #k_guess = np.array([1.5, 3.0])
+    #X_dsm, T_dsm = deterministic_simulation(odefun, X_init, T_max, step_size, k_guess)
+    #plot_result(T_dsm, X_dsm)
+
+    P_init = np.array([5*10**(-7), 0])
     T_max = 12
     step_size = 0.01
-    k_guess = np.array([1.5, 3.0])
-    X_dsm, T_dsm = deterministic_simulation(odefun, X_init, T_max, step_size, k_guess)
-    plot_result(T_dsm, X_dsm)
+    
+    k_guess = np.array([5e5, 0.2])
+    P_dsm, T_dsm = deterministic_simulation(dimerisation_kinetics_odefun_deterministic, P_init, T_max, step_size, k_guess)
+    plot_result(T_dsm, P_dsm)
 
 """
 Copied from Exercises to visualize data.
