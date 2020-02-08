@@ -39,15 +39,15 @@ def simulate_dimerisation():
 
     P_NAMES = ("Protein P", "Protein $P_2$")
     # simulate using Deterministic simulation (DSM)
-    """
+    
     P_init = np.array([5*10**(-7), 0])
     T_max = 12
     step_size = 0.01
 
     k_guess = np.array([5e5, 0.2])
     P_dsm, T_dsm = deterministic_simulation(dimerisation_kinetics_odefun_deterministic, P_init, T_max, step_size, k_guess)
-    plot_result(T_dsm, P_dsm)
-    """
+    plot_result(T_dsm, P_dsm, title="Deterministic dimeritisation", legend=P_NAMES)
+    
 
     # simulate using Gillespie
     M, c, S = generate_dimerisation_instance()

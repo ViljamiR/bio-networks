@@ -35,6 +35,7 @@ def CLE(S, M, h, c, T):
         d_W = [Delta_t * np.random.randn()*  np.sqrt(Delta_t) for i in range(V)]
         
         # Update the current state
+        print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
         temp = np.array(reaction_hazards) * Delta_t + np.sqrt(reaction_hazards)*d_W
         dx = np.matmul(S, temp)
         current_state = current_state + dx
