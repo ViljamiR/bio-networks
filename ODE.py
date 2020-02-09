@@ -53,3 +53,18 @@ def dimerisation_kinetics_odefun_stochastic(P, k=np.array([5e5, 0.2])):
     f1 = c1 * p * (p-1) / 2
     f2 = c2 * p2
     return [f1, f2]
+
+def michaelis_odefun(X, k):
+    k1 = k[0]
+    k2 = k[1]
+    k3 = k[2]
+
+    S = X[0]
+    E = X[1]
+    SE = X[2]
+
+    f1 = k2 * SE - k1 * S * E
+    f2 = (k2 + k3)*SE - k1 * S * E
+    f3 = k1 * S * E - (k2 + k3) * SE
+    f4 = k3 * SE
+    return [f1, f2, f3, f4]

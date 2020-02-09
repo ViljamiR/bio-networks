@@ -9,7 +9,7 @@ from ODE import dimerisation_kinetics_odefun_deterministic
 from CLE import CLE
 from poisson_approx import poisson_approx
 from dimeritisation import simulate_dimerisation
-
+from michaelis_menten import simulate_michaelis
 
 def main():
     M, c, S = generate_LV_instance()
@@ -23,9 +23,9 @@ def main():
     # T, X1 = CLE(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
     # plot_result(T, X1)
 
-    Nt = 1000
-    T, X1 = poisson_approx(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
-    plot_result(T, X1)
+    #Nt = 1000
+    #T, X1 = poisson_approx(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
+    #plot_result(T, X1)
 
     #X_init = np.array([1, 1.5])
     #T_max = 12
@@ -33,7 +33,12 @@ def main():
     #k_guess = np.array([1.5, 3.0])
     #X_dsm, T_dsm = deterministic_simulation(odefun, X_init, T_max, step_size, k_guess)
     #plot_result(T_dsm, X_dsm)
-    simulate_dimerisation()
+    
+    """
+    Simulation for all systems:
+    """
+    #simulate_dimerisation()
+    simulate_michaelis()
 
 """
 Copied from Exercises to visualize data.
