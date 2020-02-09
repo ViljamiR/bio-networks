@@ -10,11 +10,13 @@ from CLE import CLE
 from poisson_approx import poisson_approx
 from dimeritisation import simulate_dimerisation
 from michaelis_menten import simulate_michaelis
+from auto_regulatory import simulate_auto_regulation
+
 
 def main():
     M, c, S = generate_LV_instance()
     #T1, X1 = gillespie(S,M,LV_hazards, c,t_max=30, max_reactions=int(1e5))
-    #plot_result(T1,X1)
+    # plot_result(T1,X1)
 
     #Nt = 500
     #T, X1 = CLE(S, M, LV_hazards, c, np.linspace(0, 30, Nt))
@@ -33,17 +35,21 @@ def main():
     #k_guess = np.array([1.5, 3.0])
     #X_dsm, T_dsm = deterministic_simulation(odefun, X_init, T_max, step_size, k_guess)
     #plot_result(T_dsm, X_dsm)
-    
+
     """
     Simulation for all systems:
     """
-    #simulate_dimerisation()
-    simulate_michaelis()
+    # simulate_dimerisation()
+    # simulate_michaelis()
+    simulate_auto_regulation()
+
 
 """
 Copied from Exercises to visualize data.
 """
-def plot_result(T, X, title="", legend=("A (prey)","B (Predator)")):
+
+
+def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
     """Visualize a Lotka-Volterra simulation result. 
 
     :param T: Time step vector
@@ -73,9 +79,12 @@ def generate_LV_instance():
     S = np.transpose(post-pre)
     return M, c, S
 
+
 """
 Copied from Exercises.
 """
+
+
 def LV_hazards(x, c):
     """ Evaluates the hazard functions of the Lotka-Volterra system.
 

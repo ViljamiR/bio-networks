@@ -3,9 +3,11 @@ import numpy as np
 Copied from Exercise 4.
 Used for testing deterministic simulation during development.
 """
+
+
 def odefun(x, k):
     """Differential function f. 
-    
+
     :param x: System state. An array with length 2.
     :param k: Rate parameters. An array with length 2.
     :returns: dx/dt an array with length 2
@@ -33,13 +35,13 @@ def dimerisation_kinetics_odefun_deterministic(P, k=np.array([5e5, 0.2])):
     #c1 = 1.66*10**(-3)
     #c2 = 0.2
 
-    k1 = k[0]#c1 * Na * V / 2
-    k2 = k[1]#c2
+    k1 = k[0]  # c1 * Na * V / 2
+    k2 = k[1]  # c2
 
     p = P[0]
     p2 = P[1]
 
-    f1 = 2*k2*p2 - 2*k1*p**2  
+    f1 = 2*k2*p2 - 2*k1*p**2
     f2 = k1*p**2 - k2*p2
     return [f1, f2]
 
@@ -53,6 +55,7 @@ def dimerisation_kinetics_odefun_stochastic(P, k=np.array([5e5, 0.2])):
     f1 = c1 * p * (p-1) / 2
     f2 = c2 * p2
     return [f1, f2]
+
 
 def michaelis_odefun(X, k):
     k1 = k[0]
@@ -68,3 +71,21 @@ def michaelis_odefun(X, k):
     f3 = k1 * S * E - (k2 + k3) * SE
     f4 = k3 * SE
     return [f1, f2, f3, f4]
+
+
+def auto_regulatory_odefun(X, k):
+    k1, k2, k3, k4, k5, k6, k7, k8 = k
+    g, P, P_2, r, gP_2 = X
+
+    # d[g]/dt
+    f1 = -k1 * g * P_2 + k2*gP_2
+    # d[P_2]/dt
+    f2 = k6*P*P - k6 * P_2 - k1*g*P_2+k2*gP_2
+    # d[r]/dt
+    f3 = k3*g - k7*r
+    # d[P]/dt
+    f4 = 2*k6*P_2 - 2*k5*P*P + k4*r-k8*P_2
+    # d[gP_2]/dt
+    f5 = k1*g*P_2 - k2*gP_2
+
+    return [f1, f2, f3, f4, f5]
