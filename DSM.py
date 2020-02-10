@@ -12,7 +12,6 @@ def deterministic_simulation(ode, X_init, T_max, step_size, k_guess):
 
     while t < T_max:
         o = np.array(ode(X, k_guess))
-        print(o)
         X = X + step_size * o
 
         Xs.append(X)
