@@ -11,6 +11,7 @@ from poisson_approx import poisson_approx
 from dimeritisation import simulate_dimerisation
 from michaelis_menten import simulate_michaelis
 from auto_regulatory import simulate_auto_regulation
+from lac_operon import simulate_lac_operon
 
 
 def main():
@@ -41,8 +42,8 @@ def main():
     """
     # simulate_dimerisation()
     # simulate_michaelis()
-    simulate_auto_regulation()
-
+    # simulate_auto_regulation()
+    simulate_lac_operon()
 
 """
 Copied from Exercises to visualize data.

@@ -89,3 +89,37 @@ def auto_regulatory_odefun(X, k):
     f5 = k1*g*P_2 - k2*gP_2
 
     return [f1, f2, f3, f4, f5]
+
+
+def lac_operon_odefun(X, k):
+    k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11 = k
+    i, rI, I, Lac, o, RNAP, A, Y, Z, r, ILac, Io, RNAPo = X
+
+    # d[i]/dt
+    f1 = 0
+    # d[rI]/dt
+    f2 = k1 * i
+    # d[I]/dt
+    f3 = k2*rI - k3*I*Lac + k4 * ILac - k5 * I * o + k6 * Io
+    # d[Lac]/dt
+    f4 = -k3 * i * Lac + k4 * ILac - k11 * Lac * Z
+    # d[o]/dt
+    f5 = -k5 * I * o + k6 * Io - k7 * o * RNAP + k8*RNAPo + k9 * RNAPo
+    # d[RNAP]/dt
+    f6 = -k7 * o * RNAP + k8 * RNAPo + k9 * RNAP
+    # d[A]/dt
+    f7 = k10*r
+    # d[Y]/dt
+    f8 = k10*r
+    # d[Z]/dt
+    f9 = k10*r
+    # d[r]/dt
+    f10 = k9*RNAPo
+    # d[ILac]/dt
+    f11 = k3 * I * Lac - k4 * ILac
+    # d[Io]/dt
+    f12 = k5 * I * o - k6*Io
+    # d[RNAPo]/dt
+    f13 = k7 * o * RNAP - k8*RNAPo - k9 * RNAPo
+
+    return [f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13]
