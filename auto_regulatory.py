@@ -26,7 +26,7 @@ def simulate_auto_regulation():
     P_dsm, T_dsm = deterministic_simulation(
         auto_regulatory_odefun, P_init, T_max, step_size, k_guess)
     plot_result(T_dsm, P_dsm, title="Deterministic auto-regulation",
-                legend=P_NAMES)
+                 legend=P_NAMES)
 
     # For stochastic values are in order:
     # gP_2, g, r, P, P_2
@@ -40,15 +40,16 @@ def simulate_auto_regulation():
     # simulate using the Poisson approximation method
     Nt = 400
     T_p, X_p = poisson_approx(
-        S, M, auto_regulatory_hazards, c, np.linspace(1, 12, Nt))
+        S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
     plot_result(T_p, X_p, title="Poisson auto-regulation",
                 legend=P_NAMES_STOCH)
     plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
                 legend=("P_2"))
 
     # # simulate using the CLE method
-    M, c, S = generate_auto_reg_instance()
-    Nt = 20  # choosing delta_t such that propensity * delta_t >> 1.
+    #M, c, S = generate_auto_reg_instance()
+    #print("M",M)
+    #Nt = 4000  # choosing delta_t such that propensity * delta_t >> 1.
 
     T_p, X_p = CLE(S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
     plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES_STOCH)
@@ -75,11 +76,14 @@ def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
     plt.show()
 
 
-def generate_auto_reg_instance():
+def generate_auto_reg_instance(CLE=False):
     # Initial values.
-    M = np.array([0, 10, 0, 0, 0])
-    c = np.array([1, 10, 0.01, 10, 1, 1, 0.1, 0.01])
-
+    if CLE:
+      M = np.array([10, 10, 10, 10, 10])
+      c = np.array([0.001, 0.010, 0.00001, 0.010, 0.001, 0.001, 0.0001, 0.00001])
+    else:
+      M = np.array([10, 10, 10, 10, 10])
+      c = np.array([0.001, 0.010, 0.00001, 0.010, 0.001, 0.001, 0.0001, 0.00001])
     # Initializing pre and post-matrices
     pre = np.array([0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
                     0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0]).reshape(5, 8)
@@ -103,6 +107,8 @@ def auto_regulatory_hazards(x, c):
     """
     # Repression, reverse repression, transcription,
     # translation, dimerisation, dissociation, mRNA degradation, protetin degradation
+    print("x in hazards",x)
+    print("c in hazards",c)
     c1, c2, c3, c4, c5, c6, c7, c8 = c
 
     gP_2, g, r, P, P_2 = x

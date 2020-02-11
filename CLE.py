@@ -32,15 +32,16 @@ def CLE(S, M, h, c, T):
 
         # Compute Delta t
         Delta_t = T[idx] - T[idx - 1]
-
+        print("Delta_t: ", Delta_t)
+        print("Reaction hazards:",reaction_hazards)
         # Sample Delta W
-        d_W = [Delta_t * np.random.randn() * np.sqrt(Delta_t)
-               for i in range(V)]
+        d_W = np.sqrt(Delta_t) * np.random.randn(V)
+        #[Delta_t * np.random.randn() * np.sqrt(Delta_t)
+        # for i in range(V)]
         print(np.array(reaction_hazards))
         # Update the current state
         print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
-        temp = np.array(reaction_hazards) * Delta_t + \
-            np.sqrt(reaction_hazards)*d_W
+        temp = np.array(reaction_hazards) * Delta_t + np.sqrt(reaction_hazards)*d_W
         dx = np.matmul(S, temp)
         current_state = current_state + dx
 
