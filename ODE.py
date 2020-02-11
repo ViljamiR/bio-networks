@@ -74,17 +74,17 @@ def michaelis_odefun(X, k):
 
 
 def auto_regulatory_odefun(X, k):
+    g, P_2, r, P, gP_2 = X
     k1, k2, k3, k4, k5, k6, k7, k8 = k
-    g, P, P_2, r, gP_2 = X
 
     # d[g]/dt
-    f1 = -k1 * g * P_2 + k2*gP_2
+    f1 = k2*gP_2 - k1 * g * P_2
     # d[P_2]/dt
-    f2 = k6*P*P - k6 * P_2 - k1*g*P_2+k2*gP_2
+    f2 = k5*P*P - k6 * P_2 - k1*g*P_2 + k2*gP_2
     # d[r]/dt
     f3 = k3*g - k7*r
     # d[P]/dt
-    f4 = 2*k6*P_2 - 2*k5*P*P + k4*r-k8*P_2
+    f4 = 2*k6*P_2 - 2*k5*P*P + k4*r-k8*P
     # d[gP_2]/dt
     f5 = k1*g*P_2 - k2*gP_2
 

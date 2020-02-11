@@ -15,41 +15,42 @@ def simulate_auto_regulation():
     P_NAMES_STOCH = ("Repression product $gP_2$", "gene g",
                      "mRNA r", "Protein P", "Protein dimer $P_2$")
     # simulate using Deterministic simulation (DSM)
-
     M, c, S = generate_auto_reg_instance()
     P_init = np.array([10, 0, 0, 0, 0])
+    k_guess = np.array([1, 10, 0.01, 10, 1, 1, 0.1, 0.01])
     T_max = 250
     step_size = 0.01
 
     # Values in order:
     # r,P_2, r, P, gP_2
-    k_guess = np.array([1, 10, 0.01, 10, 1, 1, 0.1, 0.01])
     P_dsm, T_dsm = deterministic_simulation(
         auto_regulatory_odefun, P_init, T_max, step_size, k_guess)
-    # plot_result(T_dsm, P_dsm, title="Deterministic auto-regulation",
-    #            legend=P_NAMES)
+    plot_result(T_dsm, P_dsm, title="Deterministic auto-regulation",
+                legend=P_NAMES)
 
+    # For stochastic values are in order:
+    # gP_2, g, r, P, P_2
     # simulate using Gillespie
-    # T_g, X_g = gillespieSSA(S, M, auto_regulatory_hazards, c, t_max=T_max)
-    # plot_result(T_g, X_g, title="Gillespie dimeritisation",
-    #             legend=P_NAMES_STOCH)
-    # plot_result(T_g, X_g[:, 2], title="Gillespie dimeritisation",
-    #             legend=("RNA"))
+    T_g, X_g = gillespieSSA(S, M, auto_regulatory_hazards, c, t_max=T_max)
+    plot_result(T_g, X_g, title="Gillespie dimeritisation",
+                legend=P_NAMES_STOCH)
+    plot_result(T_g, X_g[:, 2], title="Gillespie dimeritisation",
+                legend=("RNA"))
 
     # simulate using the Poisson approximation method
-    # Nt = 400
-    # T_p, X_p = poisson_approx(
-    #     S, M, auto_regulatory_hazards, c, np.linspace(1, 12, Nt))
-    # plot_result(T_p, X_p, title="Poisson auto-regulation",
-    #             legend=P_NAMES_STOCH)
-    # plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
-    #             legend=("P_2"))
+    Nt = 400
+    T_p, X_p = poisson_approx(
+        S, M, auto_regulatory_hazards, c, np.linspace(1, 12, Nt))
+    plot_result(T_p, X_p, title="Poisson auto-regulation",
+                legend=P_NAMES_STOCH)
+    plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
+                legend=("P_2"))
 
     # # simulate using the CLE method
-    # M, c, S = generate_auto_reg_instance()
-    Nt = 400  # choosing delta_t such that propensity * delta_t >> 1.
+    M, c, S = generate_auto_reg_instance()
+    Nt = 20  # choosing delta_t such that propensity * delta_t >> 1.
 
-    T_p, X_p = CLE(S, M, auto_regulatory_hazards, c, np.linspace(1, 50, Nt))
+    T_p, X_p = CLE(S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
     plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES_STOCH)
 
 
