@@ -30,10 +30,10 @@ def simulate_lac_operon():
       0,  # Io
       0,  # RNAPo
       ])
-    k_guess = c
+    k_guess = k
     #print(0.1*0 - k3*I*Lac + k4 * ILac - k5 * I * o + k6 * Io)
     #print(lac_operon_odefun(P_init, k_guess))
-    T_max = 800
+    T_max = 8000
     step_size = 0.01
 
     # Values in order:
@@ -93,8 +93,8 @@ def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
 
 def generate_lac_operon_instance():
     # Initial values.
-    Na = 6.02*10**23
-    V = 1e-15
+    Na = 6.02e23
+    V = 1e-29
     M = np.array([10, 10, 10, 10, 10])
     c = np.array([
       0.02,           # c1
