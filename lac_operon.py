@@ -11,33 +11,17 @@ from matplotlib import pyplot as plt
 def simulate_lac_operon():
 
     P_NAMES = ( "i", "rI", "I", "Lac", "o", "RNAP", "A", "Y", "Z", "r", "ILac", "Io", "RNAPo")
-    P_NAMES_STOCH = ("Repression product $gP_2$", "gene g",
-                     "mRNA r", "Protein P", "Protein dimer $P_2$")
-    # simulate using Deterministic simulation (DSM)
+    
     M, c, S, k = generate_lac_operon_instance()
-    P_init = np.array([
-      1,  # i
-      0,  # rI
-      50, # I
-      20, # Lac
-      1,  # o
-      100,  # RNAP
-      0,  # A
-      0,  # Y
-      0,  # Z
-      0,  # r
-      0,  # ILac
-      0,  # Io
-      0,  # RNAPo
-      ])
+    P_init = M
     k_guess = k
-    #print(0.1*0 - k3*I*Lac + k4 * ILac - k5 * I * o + k6 * Io)
-    #print(lac_operon_odefun(P_init, k_guess))
-    T_max = 8000
-    step_size = 0.01
+    
+    T_max = 1000
+    step_size = 4
 
     # Values in order:
     # r,P_2, r, P, gP_2
+    # simulate using Deterministic simulation (DSM)
     P_dsm, T_dsm = deterministic_simulation(
         lac_operon_odefun, P_init, T_max, step_size, k_guess)
     plot_result(T_dsm, P_dsm, title="Deterministic auto-regulation",
@@ -46,29 +30,29 @@ def simulate_lac_operon():
     # For stochastic values are in order:
     # gP_2, g, r, P, P_2
     # simulate using Gillespie
-    #T_g, X_g = gillespieSSA(S, M, lac_operon_hazards, c, t_max=T_max)
-    #plot_result(T_g, X_g, title="Gillespie dimeritisation",
-    #            legend=P_NAMES_STOCH)
-    #plot_result(T_g, X_g[:, 2], title="Gillespie dimeritisation",
-    #            legend=("RNA"))
+    T_g, X_g = gillespieSSA(S, M, lac_operon_hazards, c, t_max=T_max)
+    plot_result(T_g, X_g, title="Gillespie lac operon",
+                legend=P_NAMES)
+    plot_result(T_g, X_g[:, 5], title="Gillespie dimeritisation",
+                legend=("RNA"))
 
     # simulate using the Poisson approximation method
-    ##Nt = 400
-    #T_p, X_p = poisson_approx(
-    #    S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
-    #plot_result(T_p, X_p, title="Poisson auto-regulation",
-    ##            legend=P_NAMES_STOCH)
+    Nt = 4000
+    T_p, X_p = poisson_approx(
+        S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
+    plot_result(T_p, X_p, title="Poisson auto-regulation",
+                legend=P_NAMES)
     #plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
     #            legend=("P_2"))
 
     # # simulate using the CLE method
-    #M, c, S = generate_auto_reg_instance()
-    #print("M",M)
-    #Nt = 4000  # choosing delta_t such that propensity * delta_t >> 1.
+    Nt = 4000  # choosing delta_t such that propensity * delta_t >> 1.
 
-    #T_p, X_p = CLE(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
-    #plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES_STOCH)
+    T_p, X_p = CLE(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
+    plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES)
 
+def simulate_many(N=100):
+  pass
 
 """
 Copied from Exercises to visualize data.
@@ -95,7 +79,25 @@ def generate_lac_operon_instance():
     # Initial values.
     Na = 6.02e23
     V = 1e-29
-    M = np.array([10, 10, 10, 10, 10])
+    M = np.array([
+      1,  # i
+      0,  # rI
+      50, # I
+      20, # Lac
+      1,  # o
+      100,  # RNAP
+      0,  # A
+      0,  # Y
+      0,  # Z
+      0,  # r
+      0,  # ILac
+      0,  # Io
+      0,  # RNAPo
+    ])
+
+    denominator = Na * V
+    P_init = M / denominator
+    
     c = np.array([
       0.02,           # c1
       0.1,            # c2
@@ -127,16 +129,44 @@ def generate_lac_operon_instance():
     ])
 
     # Initializing pre and post-matrices
-    pre = np.array([0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-                    0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0]).reshape(5, 8)
-    post = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-                     0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]).reshape(8, 5)
-    A = np.array([1, -1, 0, 0, -1, -1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
-                  0, 0, -2, 1, 0, 0, 0, 2, -1, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0]).reshape(8, 5)
+
+    pre = np.array([
+      #i,   rI,  I,   Lac, o,   RNAP,   A,   Y,     Z,    r,   ILac, Io,  RNAPo
+      [1,   0,   0,   0,   0,   0,      0,   0,     0,    0,   0,    0,   0],          # f1
+      [0,   1,   0,   0,   0,   0,      0,   0,     0,    0,   0,    0,   0],          # f2
+      [0,   0,   1,   1,   0,   0,      0,   0,     0,    0,   0,    0,   0],          # f3
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   1,    0,   0],          # f4
+      [0,   0,   1,   0,   1,   0,      0,   0,     0,    0,   0,    0,   0],          # f5
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   0,    1,   0],          # f6
+      [0,   0,   0,   0,   1,   1,      0,   0,     0,    0,   0,    0,   0],          # f7
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   0,    0,   1],          # f8
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   0,    0,   1],          # f9
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    1,   0,    0,   0],          # f10
+      [0,   0,   0,   1,   0,   0,      0,   0,     1,    0,   0,    0,   0]           # f11
+    ])
+
+    post = np.array([
+      #i,   rI,  I,   Lac, o,   RNAP,   A,   Y,     Z,    r,   ILac, Io,  RNAPo
+      [1,   1,   0,   0,   0,   0,      0,   0,     0,    0,   0,    0,   0],          # f1
+      [0,   1,   1,   0,   0,   0,      0,   0,     0,    0,   0,    0,   0],          # f2
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   1,    0,   0],          # f3
+      [0,   0,   1,   1,   0,   0,      0,   0,     0,    0,   0,    0,   0],          # f4
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   0,    1,   0],          # f5
+      [0,   0,   1,   0,   1,   0,      0,   0,     0,    0,   0,    0,   0],          # f6
+      [0,   0,   0,   0,   0,   0,      0,   0,     0,    0,   0,    0,   1],          # f7
+      [0,   0,   0,   0,   1,   1,      0,   0,     0,    0,   0,    0,   0],          # f8
+      [0,   0,   0,   0,   1,   1,      0,   0,     0,    1,   0,    0,   0],          # f9
+      [0,   0,   0,   0,   0,   0,      1,   1,     1,    1,   0,    0,   0],          # f10
+      [0,   0,   0,   0,   0,   0,      0,   0,     1,    0,   0,    0,   0]           # f11
+    ])
+
+    A = post - pre
+
     print(pre, '\n', post)
     # Computing Stoichiometry matrix
     print("This A", A)
     S = A.T
+    print("S", S)
     return M, c, S, k
 
 
@@ -149,23 +179,23 @@ def lac_operon_hazards(x, c):
     """
     # Repression, reverse repression, transcription,
     # translation, dimerisation, dissociation, mRNA degradation, protetin degradation
-    print("x in hazards",x)
-    print("c in hazards",c)
+ 
     c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = c
 
     i, rI, I, Lac, o, RNAP, A, Y, Z, r, ILac, Io, RNAPo = x
 
-    #h = [
-    #    0,
-    #    0,
-    #    c1 * g*P_2,             # repression
-    #    c2 * gP_2,              # reverse repression
-    #    c3 * g,                 # transcription
-    #    c4 * r,                 # translation
-    #    c5 * (P*(P-1))/2,       # dimerisation
-    #    c6 * P_2,               # dissociation
-    #    c7 * r,                 # mRNA degradation
-    #    c8 * P,                 # protein degradation
-    #]
+    h = [
+      c1*i,                    # f1
+      c2*rI,                   # f2
+      c3*I*Lac,                # f3
+      c4*ILac,                 # f4
+      c5*I*o,                  # f5
+      c6*Io,                   # f6
+      c7*o*RNAP,               # f7
+      c8*RNAPo,                # f8
+      c9*RNAPo,                # f9
+      c10*r,                   # f10
+      c11*Lac*Z                # f11    
+    ]
 
-    return []
+    return h

@@ -11,11 +11,11 @@ from poisson_approx import poisson_approx
 
 def simulate_michaelis():
     # setup constants
-    M, c, S = generate_michaelis_instance()
+    M, S_init, c, S = generate_michaelis_instance()
     S_NAMES = ("S","E","SE","P")
     
     # simulate using deterministic simulation
-    S_init = np.array([5*10**(-7), 2*10**(-7), 0, 0])
+    # S_init = np.array([5*10**(-7), 2*10**(-7), 0, 0])
     T_max = 50
     step_size = 0.01
     k_guess = np.array([1*10**6, 1*10**(-4), 0.1])
@@ -65,6 +65,7 @@ def generate_michaelis_instance():
     k2 = 1*10**(-4)
     k3 = 0.1
     M = np.array([301, 120, 0, 0])
+    P_init = M / (Na*V)
     c = np.array([ k1 / (Na * V), k2, k3])
 
     # Initializing pre and post-matrices
@@ -72,9 +73,10 @@ def generate_michaelis_instance():
     post = np.array([0,0,1,0, 1,1,0,0, 0,1,0,1]).reshape(3, 4)
 
     print(pre,'\n', post)
+    print(P_init)
     # Computing Stoichiometry matrix
     S = np.transpose(post-pre)
-    return M, c, S
+    return M, P_init, c, S
 
 def michaelis_hazards(x, c):
     """ Evaluates the hazard functions of the Michaelis-Menten system.
