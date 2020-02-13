@@ -6,6 +6,7 @@ from gillespieSSA import gillespieSSA
 from poisson_approx import poisson_approx
 from CLE import CLE
 from matplotlib import pyplot as plt
+from utils import bin_linear, plot_result, simulate_many
 
 
 def simulate_auto_regulation():
@@ -25,35 +26,47 @@ def simulate_auto_regulation():
     # r,P_2, r, P, gP_2
     P_dsm, T_dsm = deterministic_simulation(
         auto_regulatory_odefun, P_init, T_max, step_size, k_guess)
-    plot_result(T_dsm, P_dsm, title="Deterministic auto-regulation",
+    plot_result(T_dsm, P_dsm, title="Deterministic Auto-regulation",
                 legend=P_NAMES)
+    #
+    ## For stochastic values are in order:
+    ## gP_2, g, r, P, P_2
+    ## simulate using Gillespie
+    #T_g, X_g = gillespieSSA(S, M, auto_regulatory_hazards, c, t_max=T_max)
+    #plot_result(T_g, X_g, title="Gillespie dimeritisation",
+    #            legend=P_NAMES_STOCH)
+    ## plot_result(T_g, X_g[:, 2], title="Gillespie dimeritisation",
+    ##             legend=("RNA"))
+    #
+    ## simulate using the Poisson approximation method
+    #Nt = 1000
+    #T_p, X_p = poisson_approx(
+    #    S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
+    #plot_result(T_p, X_p, title="Poisson auto-regulation",
+    #            legend=P_NAMES_STOCH)
+    #plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
+    #            legend=("P_2"))
+    #
+    ## # simulate using the CLE method
+    ## M, c, S = generate_auto_reg_instance()
+    ## print("M",M)
+    #Nt = 1000  # choosing delta_t such that propensity * delta_t >> 1.
+    #
+    #T_p, X_p = CLE(S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
+    #plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES_STOCH)
 
-    # For stochastic values are in order:
-    # gP_2, g, r, P, P_2
     # simulate using Gillespie
-    T_g, X_g = gillespieSSA(S, M, auto_regulatory_hazards, c, t_max=T_max)
-    plot_result(T_g, X_g, title="Gillespie dimeritisation",
-                legend=P_NAMES_STOCH)
-    # plot_result(T_g, X_g[:, 2], title="Gillespie dimeritisation",
-    #             legend=("RNA"))
-
+    simulate_many(S, M, auto_regulatory_hazards, c, T_max, P_NAMES, "Gillespie", gillespieSSA, "Auto-regulation")
+    
+    # Linspace size
+    Nt = 4000
+  
     # simulate using the Poisson approximation method
-    Nt = 1000
-    T_p, X_p = poisson_approx(
-        S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
-    plot_result(T_p, X_p, title="Poisson auto-regulation",
-                legend=P_NAMES_STOCH)
-    plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
-                legend=("P_2"))
+    simulate_many(S, M, auto_regulatory_hazards, c, T_max,
+                   P_NAMES, "Poisson", poisson_approx, "Auto-regulation",Nt)
 
-    # # simulate using the CLE method
-    # M, c, S = generate_auto_reg_instance()
-    # print("M",M)
-    Nt = 1000  # choosing delta_t such that propensity * delta_t >> 1.
-
-    T_p, X_p = CLE(S, M, auto_regulatory_hazards, c, np.linspace(1, T_max, Nt))
-    plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES_STOCH)
-
+    # simulate using the CLE method
+    simulate_many(S, M, auto_regulatory_hazards, c, T_max, P_NAMES, "CLE", CLE, "Auto-regulation", Nt)
 
 """
 Copied from Exercises to visualize data.

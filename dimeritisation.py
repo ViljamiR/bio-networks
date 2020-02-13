@@ -8,6 +8,7 @@ from DSM import deterministic_simulation
 from ODE import dimerisation_kinetics_odefun_deterministic
 from CLE import CLE
 from poisson_approx import poisson_approx
+from utils import bin_linear, plot_result, simulate_many
 
 
 def simulate_dimerisation():
@@ -27,22 +28,34 @@ def simulate_dimerisation():
 
     # simulate using Gillespie
     M, c, S = generate_dimerisation_instance()
-    T_g, X_g = gillespieSSA(S, M, dimeritisation_hazards, c, t_max=12)
-    plot_result(T_g, X_g, title="Gillespie dimeritisation", legend=P_NAMES)
-
+    #T_g, X_g = gillespieSSA(S, M, dimeritisation_hazards, c, t_max=12)
+    #plot_result(T_g, X_g, title="Gillespie dimeritisation", legend=P_NAMES)
+    #
+    ## simulate using the Poisson approximation method
+    #M, c, S = generate_dimerisation_instance()
+    #Nt = 1000
+    #T_p, X_p = poisson_approx(
+    #    S, M, dimeritisation_hazards, c, np.linspace(1, 12, Nt))
+    #plot_result(T_p, X_p, title="Poisson dimeritisation", legend=P_NAMES)
+    #
+    ## simulate using the CLE method
+    #M, c, S = generate_dimerisation_instance()
+    #Nt = 400  # choosing delta_t such that propensity * delta_t >> 1.
+    #
+    #T_p, X_p = CLE(S, M, dimeritisation_hazards, c, np.linspace(1, 100, Nt))
+    #plot_result(T_p, X_p, title="CLE dimeritisation", legend=P_NAMES)
+    simulate_many(S, M, dimeritisation_hazards, c, T_max, P_NAMES, "Gillespie", gillespieSSA, "Dimeritisation", bw=1)
+    
+    # Linspace size
+    Nt = 4000
+  
     # simulate using the Poisson approximation method
-    M, c, S = generate_dimerisation_instance()
-    Nt = 1000
-    T_p, X_p = poisson_approx(
-        S, M, dimeritisation_hazards, c, np.linspace(1, 12, Nt))
-    plot_result(T_p, X_p, title="Poisson dimeritisation", legend=P_NAMES)
+    simulate_many(S, M, dimeritisation_hazards, c, T_max,
+                   P_NAMES, "Poisson", poisson_approx, "Dimeritisation",Nt)
 
     # simulate using the CLE method
-    M, c, S = generate_dimerisation_instance()
-    Nt = 400  # choosing delta_t such that propensity * delta_t >> 1.
+    simulate_many(S, M, dimeritisation_hazards, c, T_max, P_NAMES, "CLE", CLE, "Dimeritisation", Nt)
 
-    T_p, X_p = CLE(S, M, dimeritisation_hazards, c, np.linspace(1, 100, Nt))
-    plot_result(T_p, X_p, title="CLE dimeritisation", legend=P_NAMES)
 
 
 """

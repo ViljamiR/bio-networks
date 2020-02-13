@@ -1,10 +1,10 @@
 import numpy as np
 from matplotlib import pyplot as plt
-
+import time as t
 
 def bin_linear(T, X, bin_width, T_max):
 
-    space = np.linspace(0, T_max, T_max / bin_width)
+    space = np.linspace(0, T_max, int(T_max / bin_width))
     binned = []
     for bin_start in space:
         bin_end = bin_start + bin_width
@@ -15,14 +15,16 @@ def bin_linear(T, X, bin_width, T_max):
     return space, np.array(binned)
 
 
-def simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, sim_type, sim_function, Nt=0):
+def simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, sim_type, sim_function, system_name, Nt=0, bw=30):
     N = 100
     averaged = []
     time = []
+    execution_times = []
     for i in range(N):
+        start_time = t.time()
         if sim_type == "Gillespie":
             T_g, X_g = sim_function(S, M, lac_operon_hazards, c, t_max=T_max)
-            T, X = bin_linear(T_g, X_g, 30, T_max)
+            T, X = bin_linear(T_g, X_g, bw, T_max)
         elif sim_type == "Poisson":
             T, X = sim_function(S, M, lac_operon_hazards,
                                 c, np.linspace(1, T_max, Nt))
@@ -31,10 +33,12 @@ def simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, sim_type, sim_fun
                                 c, np.linspace(1, T_max, Nt))
         averaged.append(X)
         time = T
+        execution_times.append(t.time() - start_time)
 
     av = np.mean(averaged, axis=0)
-    plot_result(time, av, title="Averaged {0} lac operon".format(
-        sim_type), legend=P_NAMES)
+    print("Average execution time for {0} in {1} was {2}".format(sim_type, system_name, np.mean(execution_times)))
+    plot_result(time, av, title="Averaged {0} {1}".format(
+        sim_type, system_name), legend=P_NAMES)
 
 
 """

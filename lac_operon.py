@@ -21,49 +21,24 @@ def simulate_lac_operon():
     T_max = 1000
     step_size = 4
 
-    # Values in order:
-    # r,P_2, r, P, gP_2
     # simulate using Deterministic simulation (DSM)
-    # P_dsm, T_dsm = deterministic_simulation(
-    #     lac_operon_odefun, P_init, T_max, step_size, k_guess)
-    # plot_result(T_dsm, P_dsm, title="Deterministic lac operon",
-    #             legend=P_NAMES)
-
-    # For stochastic values are in order:
-    # gP_2, g, r, P, P_2
-    # simulate using Gillespie
-    # T_g, X_g = gillespieSSA(S, M, lac_operon_hazards, c, t_max=T_max)
-    # print(X_g.shape)
-    # plot_result(T_g, X_g, title="Gillespie lac operon",
-    #            legend=P_NAMES)
-    Nt = 4000
-    # simulate_many(S, M, lac_operon_hazards, c, T_max,
-    #               P_NAMES, "Gillespie", gillespieSSA)
-    # simulate_many(S, M, lac_operon_hazards, c, T_max,
-    #               P_NAMES, "Poisson", poisson_approx, Nt)
-    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "CLE", CLE, Nt)
-    #T, X = bin_linear(T_g, X_g, 30, T_max)
-    # print(len(T))
-    # plot_result(T, X, title="Binned gillespie lac operon",
-    #            legend=P_NAMES)
-    # plot_result(T_g, X_g[:, 5], title="Gillespie dimeritisation",
-    #            legend=("RNA"))
-
-    # simulate using the Poisson approximation method
-    Nt = 4000
-    T_p, X_p = poisson_approx(
-        S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
-    plot_result(T_p, X_p, title="Poisson lac operon",
+    P_dsm, T_dsm = deterministic_simulation(
+        lac_operon_odefun, P_init, T_max, step_size, k_guess)
+    plot_result(T_dsm, P_dsm, title="Deterministic lac operon",
                 legend=P_NAMES)
-    # plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
-    #            legend=("P_2"))
-    #simulate_many_poisson(S, M, lac_operon_hazards, c, T_max, P_NAMES, Nt)
 
-    # # simulate using the CLE method
-    # Nt = 4000  # choosing delta_t such that propensity * delta_t >> 1.
+    # simulate using Gillespie
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "Gillespie", gillespieSSA, "Lac operon")
+    
+    # Linspace size
+    Nt = 4000
+  
+    # simulate using the Poisson approximation method
+    simulate_many(S, M, lac_operon_hazards, c, T_max,
+                   P_NAMES, "Poisson", poisson_approx, "Lac operon",Nt)
 
-    #T_p, X_p = CLE(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
-    #plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES)
+    # simulate using the CLE method
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "CLE", CLE, "Lac operon", Nt)
 
 
 def generate_lac_operon_instance():

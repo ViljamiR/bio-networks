@@ -42,7 +42,7 @@ def simulate_michaelis():
     # T_p, X_p = CLE(S, M, michaelis_hazards, c, np.linspace(1, T_max, Nt))
     # plot_result(T_p, X_p, title="CLE Michaelis-Menten", legend=S_NAMES)
 
-    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "CLE", CLE, Nt)
+    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "CLE", CLE, "Michaelis-Menten",Nt)
 
 
 """
