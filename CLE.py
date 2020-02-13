@@ -13,7 +13,7 @@ def CLE(S, M, h, c, T):
     :param c: Vector of stochastic rate constants. One-dimensional numpy array with length V.
     :param T: Time span, a vector giving the time discretisation. One-dimensional numpy array.
 
-    :return: 
+    :return:
         T - One-dimensional numpy array containing the sample times. Returns T unchanged.
         X - Two dimensional numpy array, where the rows contain the system state at each event time.
 
@@ -32,21 +32,29 @@ def CLE(S, M, h, c, T):
 
         # Compute Delta t
         Delta_t = T[idx] - T[idx - 1]
-        
+        tau = Delta_t
         # Sample Delta W
-        d_W = np.sqrt(Delta_t) * np.random.randn(V)
-        #[Delta_t * np.random.randn() * np.sqrt(Delta_t)
+        d_W = np.sqrt(tau) * np.random.randn(V)
+        # [Delta_t * np.random.randn() * np.sqrt(Delta_t)
         # for i in range(V)]
-        #print(np.array(reaction_hazards))
+        # print(np.array(reaction_hazards))
         # Update the current state
-        #print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
+        # print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
 
-        mu = sum([ A[:, j]*r for j, r in enumerate(reaction_hazards)])
-        sigma_2 = sum([ (A[:, j]**2)*r for j, r in enumerate(reaction_hazards) ])
+        # epsilon = 0.03
+        # mu = sum([A[j, :]*r for j, r in enumerate(reaction_hazards)])
+        # sigma_2 = sum([(A[j, :]**2)*r for j, r in enumerate(reaction_hazards)])
+        # tau = min([(max(epsilon*current_state[i], 1)/(2 * abs(mu[i])),
+        #            max(epsilon*current_state[i], 1)**2/(4*sigma_2[i])) for i in range(N)])
 
+        decay_rate = 0.9
+        j = 0
+        while (any(i <= 1 for i in np.array(reaction_hazards) * tau) and (j < 100)):
+            tau = tau * decay_rate
+            j += 1
 
-        
-        temp = np.array(reaction_hazards) * Delta_t + np.sqrt(reaction_hazards)*d_W
+        print(reaction_hazards)
+        temp = np.array(reaction_hazards) * tau + np.sqrt(reaction_hazards)*d_W
         dx = np.matmul(S, temp)
         current_state = current_state + dx
 

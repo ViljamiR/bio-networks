@@ -9,39 +9,45 @@ from ODE import michaelis_odefun
 from CLE import CLE
 from poisson_approx import poisson_approx
 
+
 def simulate_michaelis():
     # setup constants
     M, S_init, c, S = generate_michaelis_instance()
-    S_NAMES = ("S","E","SE","P")
-    
+    S_NAMES = ("S", "E", "SE", "P")
+
     # simulate using deterministic simulation
     # S_init = np.array([5*10**(-7), 2*10**(-7), 0, 0])
     T_max = 50
     step_size = 0.01
     k_guess = np.array([1*10**6, 1*10**(-4), 0.1])
-    S_dsm, T_dsm = deterministic_simulation(michaelis_odefun, S_init, T_max, step_size, k_guess)
-    plot_result(T_dsm, S_dsm, title="Deterministic Michaelis-Menten", legend=S_NAMES)
-    
+    S_dsm, T_dsm = deterministic_simulation(
+        michaelis_odefun, S_init, T_max, step_size, k_guess)
+    plot_result(
+        T_dsm, S_dsm, title="Deterministic Michaelis-Menten", legend=S_NAMES)
+
     # simulate using Gillespie
-    T_g, X_g = gillespieSSA(S,M,michaelis_hazards, c,t_max=T_max)
-    plot_result(T_g, X_g,title="Gillespie Michaelis-Menten", legend=S_NAMES)
+    T_g, X_g = gillespieSSA(S, M, michaelis_hazards, c, t_max=T_max)
+    plot_result(T_g, X_g, title="Gillespie Michaelis-Menten", legend=S_NAMES)
 
     # simulate using the Poisson approximation method
-    Nt = 1000
-    T_p, X_p = poisson_approx(S,M,michaelis_hazards, c,np.linspace(1,T_max,Nt))
+    Nt = 200
+    T_p, X_p = poisson_approx(S, M, michaelis_hazards,
+                              c, np.linspace(1, T_max, Nt))
     plot_result(T_p, X_p, title="Poisson Michaelis-Menten", legend=S_NAMES)
 
-     # simulate using the CLE method
-    Nt = 100 # choosing delta_t such that propensity * delta_t >> 1.
+    # simulate using the CLE method
+    Nt = 2000  # choosing delta_t such that propensity * delta_t >> 1.
 
-    T_p, X_p = CLE(S,M,michaelis_hazards, c,np.linspace(1,T_max,Nt))
+    T_p, X_p = CLE(S, M, michaelis_hazards, c, np.linspace(1, T_max, Nt))
     plot_result(T_p, X_p, title="CLE Michaelis-Menten", legend=S_NAMES)
 
 
 """
 Copied (with modifications) from Exercises to visualize data.
 """
-def plot_result(T, X, title="", legend=("A (prey)","B (Predator)")):
+
+
+def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
     """Visualize a Lotka-Volterra simulation result. 
 
     :param T: Time step vector
@@ -66,17 +72,18 @@ def generate_michaelis_instance():
     k3 = 0.1
     M = np.array([301, 120, 0, 0])
     P_init = M / (Na*V)
-    c = np.array([ k1 / (Na * V), k2, k3])
+    c = np.array([k1 / (Na * V), k2, k3])
 
     # Initializing pre and post-matrices
-    pre = np.array([1, 1, 0, 0, 0,0,1,0, 0,0,1,0]).reshape(3, 4)
-    post = np.array([0,0,1,0, 1,1,0,0, 0,1,0,1]).reshape(3, 4)
+    pre = np.array([1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0]).reshape(3, 4)
+    post = np.array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1]).reshape(3, 4)
 
-    print(pre,'\n', post)
+    print(pre, '\n', post)
     print(P_init)
     # Computing Stoichiometry matrix
     S = np.transpose(post-pre)
     return M, P_init, c, S
+
 
 def michaelis_hazards(x, c):
     """ Evaluates the hazard functions of the Michaelis-Menten system.
@@ -94,9 +101,9 @@ def michaelis_hazards(x, c):
     x3 = x[2]
 
     h = [
-      c1*x1*x2, # S + E -> SE
-      c2*x3,    # SE -> S + E
-      c3*x3     # SE -> P + E
+        c1*x1*x2,  # S + E -> SE
+        c2*x3,    # SE -> S + E
+        c3*x3     # SE -> P + E
     ]
 
     return h
