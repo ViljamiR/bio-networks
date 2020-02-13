@@ -8,6 +8,7 @@ from DSM import deterministic_simulation
 from ODE import michaelis_odefun
 from CLE import CLE
 from poisson_approx import poisson_approx
+from utils import bin_linear, plot_result, simulate_many
 
 
 def simulate_michaelis():
@@ -20,26 +21,28 @@ def simulate_michaelis():
     T_max = 50
     step_size = 0.01
     k_guess = np.array([1*10**6, 1*10**(-4), 0.1])
-    S_dsm, T_dsm = deterministic_simulation(
-        michaelis_odefun, S_init, T_max, step_size, k_guess)
-    plot_result(
-        T_dsm, S_dsm, title="Deterministic Michaelis-Menten", legend=S_NAMES)
+    # S_dsm, T_dsm = deterministic_simulation(
+    #     michaelis_odefun, S_init, T_max, step_size, k_guess)
+    # plot_result(
+    #     T_dsm, S_dsm, title="Deterministic Michaelis-Menten", legend=S_NAMES)
 
     # simulate using Gillespie
-    T_g, X_g = gillespieSSA(S, M, michaelis_hazards, c, t_max=T_max)
-    plot_result(T_g, X_g, title="Gillespie Michaelis-Menten", legend=S_NAMES)
+    # T_g, X_g = gillespieSSA(S, M, michaelis_hazards, c, t_max=T_max)
+    # plot_result(T_g, X_g, title="Gillespie Michaelis-Menten", legend=S_NAMES)
 
     # simulate using the Poisson approximation method
     Nt = 200
-    T_p, X_p = poisson_approx(S, M, michaelis_hazards,
-                              c, np.linspace(1, T_max, Nt))
-    plot_result(T_p, X_p, title="Poisson Michaelis-Menten", legend=S_NAMES)
+    # T_p, X_p = poisson_approx(S, M, michaelis_hazards,
+    #                           c, np.linspace(1, T_max, Nt))
+    # plot_result(T_p, X_p, title="Poisson Michaelis-Menten", legend=S_NAMES)
 
     # simulate using the CLE method
     Nt = 2000  # choosing delta_t such that propensity * delta_t >> 1.
 
-    T_p, X_p = CLE(S, M, michaelis_hazards, c, np.linspace(1, T_max, Nt))
-    plot_result(T_p, X_p, title="CLE Michaelis-Menten", legend=S_NAMES)
+    # T_p, X_p = CLE(S, M, michaelis_hazards, c, np.linspace(1, T_max, Nt))
+    # plot_result(T_p, X_p, title="CLE Michaelis-Menten", legend=S_NAMES)
+
+    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "CLE", CLE, Nt)
 
 
 """

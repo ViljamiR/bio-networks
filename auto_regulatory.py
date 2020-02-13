@@ -101,9 +101,9 @@ def generate_auto_reg_instance(CLE=False):
                      0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0]).reshape(8, 5)
     A = np.array([1, -1, 0, 0, -1, -1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0,
                   0, 0, -2, 1, 0, 0, 0, 2, -1, 0, 0, -1, 0, 0, 0, 0, 0, -1, 0]).reshape(8, 5)
-    print(pre, '\n', post)
+    #print(pre, '\n', post)
     # Computing Stoichiometry matrix
-    print("This A", A)
+    #print("This A", A)
     S = A.T
     return M, c, S, P_I, k_guess
 

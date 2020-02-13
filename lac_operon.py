@@ -6,6 +6,7 @@ from gillespieSSA import gillespieSSA
 from poisson_approx import poisson_approx
 from CLE import CLE
 from matplotlib import pyplot as plt
+from utils import bin_linear, plot_result, simulate_many
 
 
 def simulate_lac_operon():
@@ -23,19 +24,30 @@ def simulate_lac_operon():
     # Values in order:
     # r,P_2, r, P, gP_2
     # simulate using Deterministic simulation (DSM)
-    P_dsm, T_dsm = deterministic_simulation(
-        lac_operon_odefun, P_init, T_max, step_size, k_guess)
-    plot_result(T_dsm, P_dsm, title="Deterministic lac operon",
-                legend=P_NAMES)
+    # P_dsm, T_dsm = deterministic_simulation(
+    #     lac_operon_odefun, P_init, T_max, step_size, k_guess)
+    # plot_result(T_dsm, P_dsm, title="Deterministic lac operon",
+    #             legend=P_NAMES)
 
     # For stochastic values are in order:
     # gP_2, g, r, P, P_2
     # simulate using Gillespie
-    T_g, X_g = gillespieSSA(S, M, lac_operon_hazards, c, t_max=T_max)
-    plot_result(T_g, X_g, title="Gillespie lac operon",
-                legend=P_NAMES)
-    plot_result(T_g, X_g[:, 5], title="Gillespie dimeritisation",
-                legend=("RNA"))
+    # T_g, X_g = gillespieSSA(S, M, lac_operon_hazards, c, t_max=T_max)
+    # print(X_g.shape)
+    # plot_result(T_g, X_g, title="Gillespie lac operon",
+    #            legend=P_NAMES)
+    Nt = 4000
+    # simulate_many(S, M, lac_operon_hazards, c, T_max,
+    #               P_NAMES, "Gillespie", gillespieSSA)
+    # simulate_many(S, M, lac_operon_hazards, c, T_max,
+    #               P_NAMES, "Poisson", poisson_approx, Nt)
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "CLE", CLE, Nt)
+    #T, X = bin_linear(T_g, X_g, 30, T_max)
+    # print(len(T))
+    # plot_result(T, X, title="Binned gillespie lac operon",
+    #            legend=P_NAMES)
+    # plot_result(T_g, X_g[:, 5], title="Gillespie dimeritisation",
+    #            legend=("RNA"))
 
     # simulate using the Poisson approximation method
     Nt = 4000
@@ -45,41 +57,13 @@ def simulate_lac_operon():
                 legend=P_NAMES)
     # plot_result(T_p, X_p[:, 4], title="Poisson auto-regulation",
     #            legend=("P_2"))
+    #simulate_many_poisson(S, M, lac_operon_hazards, c, T_max, P_NAMES, Nt)
 
     # # simulate using the CLE method
-    Nt = 4000  # choosing delta_t such that propensity * delta_t >> 1.
+    # Nt = 4000  # choosing delta_t such that propensity * delta_t >> 1.
 
-    T_p, X_p = CLE(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
-    plot_result(T_p, X_p, title="CLE lac operon", legend=P_NAMES)
-
-
-def simulate_many(N=100):
-    pass
-
-
-def linearBinning(data, bin_width):
-    pass
-
-
-"""
-Copied from Exercises to visualize data.
-"""
-
-
-def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
-    """Visualize a Lotka-Volterra simulation result. 
-
-    :param T: Time step vector
-    :param X: State vector
-    :return: Nothing.
-    """
-    plt.figure(figsize=(10, 6))
-    plt.plot(T, X)
-    plt.title(title)
-    plt.xlabel('Time')
-    plt.ylabel('Number of individuals')
-    plt.legend(legend, loc='upper right')
-    plt.show()
+    #T_p, X_p = CLE(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
+    #plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES)
 
 
 def generate_lac_operon_instance():
@@ -191,11 +175,11 @@ def generate_lac_operon_instance():
 
     A = post - pre
 
-    print(pre, '\n', post)
+    #print(pre, '\n', post)
     # Computing Stoichiometry matrix
-    print("This A", A)
+    #print("This A", A)
     S = A.T
-    print("S", S)
+    #print("S", S)
     return M, c, S, k
 
 

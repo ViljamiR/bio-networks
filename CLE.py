@@ -49,11 +49,11 @@ def CLE(S, M, h, c, T):
 
         decay_rate = 0.9
         j = 0
-        while (any(i <= 1 for i in np.array(reaction_hazards) * tau) and (j < 100)):
+        while (any(i <= 1 for i in np.array(reaction_hazards) * tau) and (j < 10)):
             tau = tau * decay_rate
             j += 1
 
-        print(reaction_hazards)
+        # print(reaction_hazards)
         temp = np.array(reaction_hazards) * tau + np.sqrt(reaction_hazards)*d_W
         dx = np.matmul(S, temp)
         current_state = current_state + dx
