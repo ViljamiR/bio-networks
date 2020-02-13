@@ -54,6 +54,10 @@ def simulate_lac_operon():
 def simulate_many(N=100):
   pass
 
+def linearBinning(data, bin_width):
+  pass
+
+
 """
 Copied from Exercises to visualize data.
 """

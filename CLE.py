@@ -23,7 +23,7 @@ def CLE(S, M, h, c, T):
     X = np.zeros((len(T), N))
     current_state = np.asarray(M, dtype=np.float64)
     X[0, :] = current_state
-
+    A = S.T
     # Main loop
     for idx in range(1, len(T)):
 
@@ -32,15 +32,20 @@ def CLE(S, M, h, c, T):
 
         # Compute Delta t
         Delta_t = T[idx] - T[idx - 1]
-        print("Delta_t: ", Delta_t)
-        print("Reaction hazards:",reaction_hazards)
+        
         # Sample Delta W
         d_W = np.sqrt(Delta_t) * np.random.randn(V)
         #[Delta_t * np.random.randn() * np.sqrt(Delta_t)
         # for i in range(V)]
-        print(np.array(reaction_hazards))
+        #print(np.array(reaction_hazards))
         # Update the current state
-        print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
+        #print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
+
+        mu = sum([ A[:, j]*r for j, r in enumerate(reaction_hazards)])
+        sigma_2 = sum([ (A[:, j]**2)*r for j, r in enumerate(reaction_hazards) ])
+
+
+        
         temp = np.array(reaction_hazards) * Delta_t + np.sqrt(reaction_hazards)*d_W
         dx = np.matmul(S, temp)
         current_state = current_state + dx
