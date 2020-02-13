@@ -6,7 +6,7 @@ from gillespieSSA import gillespieSSA
 from poisson_approx import poisson_approx
 from CLE import CLE
 from matplotlib import pyplot as plt
-
+from utils import bin_linear, plot_result, simulate_many
 
 def simulate_lac_operon():
 
@@ -34,7 +34,10 @@ def simulate_lac_operon():
     print(X_g.shape)
     #plot_result(T_g, X_g, title="Gillespie lac operon",
     #            legend=P_NAMES)
-    simulate_many_gillespies(S, M, lac_operon_hazards, c, T_max, P_NAMES)
+    Nt = 4000
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "Gillespie", gillespieSSA)
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "Poisson", poisson_approx, Nt)
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "CLE", CLE, Nt)
     #T, X = bin_linear(T_g, X_g, 30, T_max)
     #print(len(T))
     #plot_result(T, X, title="Binned gillespie lac operon",
@@ -57,64 +60,6 @@ def simulate_lac_operon():
 
     #T_p, X_p = CLE(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
     #plot_result(T_p, X_p, title="CLE auto-regulation", legend=P_NAMES)
-
-def simulate_many_gillespies(S, M, lac_operon_hazards, c, T_max, P_NAMES):
-  N = 130
-  averaged = []
-  time = []
-  for i in range(N):
-    T_g, X_g = gillespieSSA(S, M, lac_operon_hazards, c, t_max=T_max)
-    T_b, X_b = bin_linear(T_g, X_g, 30, T_max)
-    #print("X", X_b, X_b.shape)
-    averaged.append(X_b)
-    time = T_b
-  av = np.mean(averaged, axis=0)
-  #print("average",av, av.shape)
-  plot_result(time, av, title="Averaged Gillespie lac operon", legend=P_NAMES)
-
-
-def simulate_many_poisson(S, M, lac_operon_hazards, c, T_max, P_NAMES, Nt):
-  N = 10
-  averaged = []
-  time = []
-  for i in range(N):
-    T_p, X_p = poisson_approx(S, M, lac_operon_hazards, c, np.linspace(1, T_max, Nt))
-    av = np.mean(X_p, axis=0)
-    time = T_p
-    averaged.append(av)
-  plot_result(time, averaged, title="Averaged Gillespie lac operon", legend=P_NAMES)
-
-
-def bin_linear(T, X, bin_width, T_max):
-
-  space = np.linspace(0, T_max, T_max / bin_width)
-  binned = []
-  for bin_start in space:
-    bin_end = bin_start + bin_width
-    data_in_range = [x for i, x in enumerate(X) if ( T[i] >= bin_start and T[i] <= bin_end )]
-    #print(data_in_range)
-    binned.append(np.mean(data_in_range, axis=0))
-
-  return space, np.array(binned)
-"""
-Copied from Exercises to visualize data.
-"""
-
-
-def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
-    """Visualize a Lotka-Volterra simulation result. 
-
-    :param T: Time step vector
-    :param X: State vector
-    :return: Nothing.
-    """
-    plt.figure(figsize=(10, 6))
-    plt.plot(T, X)
-    plt.title(title)
-    plt.xlabel('Time')
-    plt.ylabel('Number of individuals')
-    plt.legend(legend, loc='upper right')
-    plt.show()
 
 
 def generate_lac_operon_instance():
