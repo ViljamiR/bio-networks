@@ -1,5 +1,5 @@
 import numpy as np
-
+import time
 """
 Implements the Deterministic simulation
 """
@@ -13,6 +13,7 @@ def deterministic_simulation(ode, X_init, T_max, step_size, k_guess):
 
     Ts = [t]
 
+    start_time = time.time()
     while t < T_max:
         o = np.array(ode(X, k_guess))
         X = X + step_size * o
@@ -21,4 +22,5 @@ def deterministic_simulation(ode, X_init, T_max, step_size, k_guess):
 
         t = t + step_size
         Ts.append(t)
+    print("Non-averaged time to execute the deterministic simulation was {0}".format(time.time() - start_time))
     return Xs, Ts

@@ -8,7 +8,7 @@ from DSM import deterministic_simulation
 from ODE import dimerisation_kinetics_odefun_deterministic
 from CLE import CLE
 from poisson_approx import poisson_approx
-from utils import bin_linear, plot_result, simulate_many
+from utils import bin_linear, simulate_many
 
 
 def simulate_dimerisation():
