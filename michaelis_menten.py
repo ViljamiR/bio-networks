@@ -17,7 +17,6 @@ def simulate_michaelis():
     S_NAMES = ("S", "E", "SE", "P")
 
     # simulate using deterministic simulation
-    # S_init = np.array([5*10**(-7), 2*10**(-7), 0, 0])
     T_max = 50
     step_size = 0.01
     k_guess = np.array([1*10**6, 1*10**(-4), 0.1])
@@ -31,50 +30,29 @@ def simulate_michaelis():
     # plot_result(T_g, X_g, title="Gillespie Michaelis-Menten", legend=S_NAMES)
 
     # simulate using the Poisson approximation method
-    Nt = 200
+    # Nt = 200
     # T_p, X_p = poisson_approx(S, M, michaelis_hazards,
     #                           c, np.linspace(1, T_max, Nt))
     # plot_result(T_p, X_p, title="Poisson Michaelis-Menten", legend=S_NAMES)
 
     # simulate using the CLE method
-    Nt = 2000  # choosing delta_t such that propensity * delta_t >> 1.
-
+    # Nt = 2000
     # T_p, X_p = CLE(S, M, michaelis_hazards, c, np.linspace(1, T_max, Nt))
     # plot_result(T_p, X_p, title="CLE Michaelis-Menten", legend=S_NAMES)
 
-    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "Gillespie", gillespieSSA, "Michaelis-Menten", bw=5)
-    
+    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES,
+                  "Gillespie", gillespieSSA, "Michaelis-Menten", bw=5)
+
     # Linspace size
     Nt = 200
-  
+
     # simulate using the Poisson approximation method
     simulate_many(S, M, michaelis_hazards, c, T_max,
-                   S_NAMES, "Poisson", poisson_approx, "Michaelis-Menten",Nt)
+                  S_NAMES, "Poisson", poisson_approx, "Michaelis-Menten", Nt)
 
     # simulate using the CLE method
-    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "CLE", CLE, "Michaelis-Menten",Nt)
-
-
-
-"""
-Copied (with modifications) from Exercises to visualize data.
-"""
-
-
-def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
-    """Visualize a Lotka-Volterra simulation result. 
-
-    :param T: Time step vector
-    :param X: State vector
-    :return: Nothing.
-    """
-    plt.figure(figsize=(10, 6))
-    plt.plot(T, X)
-    plt.title(title)
-    plt.xlabel('Time')
-    plt.ylabel('Number of individuals')
-    plt.legend(legend, loc='upper right')
-    plt.show()
+    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES,
+                  "CLE", CLE, "Michaelis-Menten", Nt)
 
 
 def generate_michaelis_instance():
@@ -92,8 +70,6 @@ def generate_michaelis_instance():
     pre = np.array([1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0]).reshape(3, 4)
     post = np.array([0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1]).reshape(3, 4)
 
-    print(pre, '\n', post)
-    print(P_init)
     # Computing Stoichiometry matrix
     S = np.transpose(post-pre)
     return M, P_init, c, S

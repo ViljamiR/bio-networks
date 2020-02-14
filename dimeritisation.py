@@ -31,31 +31,32 @@ def simulate_dimerisation():
     #T_g, X_g = gillespieSSA(S, M, dimeritisation_hazards, c, t_max=12)
     #plot_result(T_g, X_g, title="Gillespie dimeritisation", legend=P_NAMES)
     #
-    ## simulate using the Poisson approximation method
+    # simulate using the Poisson approximation method
     #M, c, S = generate_dimerisation_instance()
     #Nt = 1000
-    #T_p, X_p = poisson_approx(
+    # T_p, X_p = poisson_approx(
     #    S, M, dimeritisation_hazards, c, np.linspace(1, 12, Nt))
     #plot_result(T_p, X_p, title="Poisson dimeritisation", legend=P_NAMES)
     #
-    ## simulate using the CLE method
+    # simulate using the CLE method
     #M, c, S = generate_dimerisation_instance()
-    #Nt = 400  # choosing delta_t such that propensity * delta_t >> 1.
+    # Nt = 400  # choosing delta_t such that propensity * delta_t >> 1.
     #
     #T_p, X_p = CLE(S, M, dimeritisation_hazards, c, np.linspace(1, 100, Nt))
     #plot_result(T_p, X_p, title="CLE dimeritisation", legend=P_NAMES)
-    simulate_many(S, M, dimeritisation_hazards, c, T_max, P_NAMES, "Gillespie", gillespieSSA, "Dimeritisation", bw=1)
-    
+    simulate_many(S, M, dimeritisation_hazards, c, T_max, P_NAMES,
+                  "Gillespie", gillespieSSA, "Dimeritisation", bw=1)
+
     # Linspace size
     Nt = 4000
-  
+
     # simulate using the Poisson approximation method
     simulate_many(S, M, dimeritisation_hazards, c, T_max,
-                   P_NAMES, "Poisson", poisson_approx, "Dimeritisation",Nt)
+                  P_NAMES, "Poisson", poisson_approx, "Dimeritisation", Nt)
 
     # simulate using the CLE method
-    simulate_many(S, M, dimeritisation_hazards, c, T_max, P_NAMES, "CLE", CLE, "Dimeritisation", Nt)
-
+    simulate_many(S, M, dimeritisation_hazards, c, T_max,
+                  P_NAMES, "CLE", CLE, "Dimeritisation", Nt)
 
 
 """
@@ -88,7 +89,6 @@ def generate_dimerisation_instance():
     pre = np.array([2, 0, 0, 1]).reshape(2, 2)
     post = np.array([0, 1, 2, 0]).reshape(2, 2)
 
-    print(pre, '\n', post)
     # Computing Stoichiometry matrix
     S = np.transpose(post-pre)
     return M, c, S

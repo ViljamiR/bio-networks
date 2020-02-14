@@ -28,17 +28,19 @@ def simulate_lac_operon():
                 legend=P_NAMES)
 
     # simulate using Gillespie
-    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "Gillespie", gillespieSSA, "Lac operon")
-    
+    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES,
+                  "Gillespie", gillespieSSA, "Lac operon")
+
     # Linspace size
     Nt = 4000
-  
+
     # simulate using the Poisson approximation method
     simulate_many(S, M, lac_operon_hazards, c, T_max,
-                   P_NAMES, "Poisson", poisson_approx, "Lac operon",Nt)
+                  P_NAMES, "Poisson", poisson_approx, "Lac operon", Nt)
 
     # simulate using the CLE method
-    simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, "CLE", CLE, "Lac operon", Nt)
+    simulate_many(S, M, lac_operon_hazards, c, T_max,
+                  P_NAMES, "CLE", CLE, "Lac operon", Nt)
 
 
 def generate_lac_operon_instance():
@@ -150,11 +152,8 @@ def generate_lac_operon_instance():
 
     A = post - pre
 
-    #print(pre, '\n', post)
     # Computing Stoichiometry matrix
-    #print("This A", A)
     S = A.T
-    #print("S", S)
     return M, c, S, k
 
 
@@ -165,7 +164,7 @@ def lac_operon_hazards(x, c):
     :param c: Vector of stochastic rate constants. One-dimensional numpy array with length V.
     :return: All reaction hazards as a one-dimensional numpy array of length V.
     """
-    # Repression, reverse repression, transcription,
+    # Reactions: Repression, reverse repression, transcription,
     # translation, dimerisation, dissociation, mRNA degradation, protetin degradation
 
     c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 = c

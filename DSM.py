@@ -1,9 +1,12 @@
 import numpy as np
 
+"""
+Implements the Deterministic simulation
+"""
+
 
 def deterministic_simulation(ode, X_init, T_max, step_size, k_guess):
     X = X_init
-    print(X_init)
     t = 0
     Xs = []
     Xs.append(X_init)

@@ -24,24 +24,23 @@ def dimerisation_kinetics_odefun(P, k=np.array([5e5, 0.2])):
     k1 = k[0]
     k2 = k[1]
 
+    # d[P_2]/dt
     f1 = cell * p * p * k1
+    # d[P_2]/dt
     f2 = cell * p2 * k2
     return [f1, f2]
 
 
 def dimerisation_kinetics_odefun_deterministic(P, k=np.array([5e5, 0.2])):
-    #V = 10**(-15)
-    #Na = 6.02*10**23
-    #c1 = 1.66*10**(-3)
-    #c2 = 0.2
-
     k1 = k[0]  # c1 * Na * V / 2
     k2 = k[1]  # c2
 
     p = P[0]
     p2 = P[1]
 
+    # d[P]/dt
     f1 = 2*k2*p2 - 2*k1*p**2
+    # d[P_2]/dt
     f2 = k1*p**2 - k2*p2
     return [f1, f2]
 
@@ -66,9 +65,13 @@ def michaelis_odefun(X, k):
     E = X[1]
     SE = X[2]
 
+    # d[S]/dt
     f1 = k2 * SE - k1 * S * E
+    # d[E]/dt
     f2 = (k2 + k3)*SE - k1 * S * E
+    # d[SE]/dt
     f3 = k1 * S * E - (k2 + k3) * SE
+    # d[P]/dt
     f4 = k3 * SE
     return [f1, f2, f3, f4]
 

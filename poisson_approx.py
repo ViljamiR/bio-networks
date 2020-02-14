@@ -44,7 +44,6 @@ def poisson_approx(S, M, h, c, T):
             j += 1
 
         # Sample Poisson random numbers
-        # print(reaction_hazards)
 
         r_i = [np.random.poisson(i * tau) for i in reaction_hazards]
 

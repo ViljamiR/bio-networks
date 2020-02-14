@@ -1,5 +1,5 @@
 import numpy as np
-# Copied from exercise 3
+# Copied from exercise 3 with modifications to fulfill leap conditions.
 
 
 def CLE(S, M, h, c, T):
@@ -35,17 +35,8 @@ def CLE(S, M, h, c, T):
         tau = Delta_t
         # Sample Delta W
         d_W = np.sqrt(tau) * np.random.randn(V)
-        # [Delta_t * np.random.randn() * np.sqrt(Delta_t)
-        # for i in range(V)]
-        # print(np.array(reaction_hazards))
-        # Update the current state
-        # print("Is this >> 1: ", np.array(reaction_hazards) * Delta_t, "?")
 
-        # epsilon = 0.03
-        # mu = sum([A[j, :]*r for j, r in enumerate(reaction_hazards)])
-        # sigma_2 = sum([(A[j, :]**2)*r for j, r in enumerate(reaction_hazards)])
-        # tau = min([(max(epsilon*current_state[i], 1)/(2 * abs(mu[i])),
-        #            max(epsilon*current_state[i], 1)**2/(4*sigma_2[i])) for i in range(N)])
+        # Update the current state
 
         decay_rate = 0.9
         j = 0
