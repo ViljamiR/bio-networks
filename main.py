@@ -40,8 +40,8 @@ def main():
     """
     Simulation for all systems:
     """
-    simulate_dimerisation()
-    #simulate_michaelis()
+    #simulate_dimerisation()
+    simulate_michaelis()
     #simulate_auto_regulation()
     #simulate_lac_operon()
 

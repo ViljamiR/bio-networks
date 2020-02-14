@@ -36,8 +36,10 @@ def simulate_many(S, M, lac_operon_hazards, c, T_max, P_NAMES, sim_type, sim_fun
         execution_times.append(t.time() - start_time)
 
     av = np.mean(averaged, axis=0)
+    std = np.std(averaged, axis=0)
     print("Average execution time for {0} in {1} was {2}".format(sim_type, system_name, np.mean(execution_times)))
-    plot_result(time, av, title="Averaged {0} {1}".format(
+    print("and standard deviation for {0} in {1} was {2}".format(sim_type, system_name, std))
+    plot_result(time, av, std, title="Averaged {0} {1}".format(
         sim_type, system_name), legend=P_NAMES)
 
 
@@ -46,7 +48,7 @@ Copied from Exercises to visualize data.
 """
 
 
-def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
+def plot_result(T, X, std, title="", legend=("A (prey)", "B (Predator)")):
     """Visualize a Lotka-Volterra simulation result. 
 
     :param T: Time step vector
@@ -55,6 +57,8 @@ def plot_result(T, X, title="", legend=("A (prey)", "B (Predator)")):
     """
     plt.figure(figsize=(10, 6))
     plt.plot(T, X)
+    plt.plot(T, X + std, c="black", linestyle=":")
+    plt.plot(T, X - std, c="black", linestyle=":")
     plt.title(title)
     plt.xlabel('Time')
     plt.ylabel('Number of molecules')

@@ -42,7 +42,18 @@ def simulate_michaelis():
     # T_p, X_p = CLE(S, M, michaelis_hazards, c, np.linspace(1, T_max, Nt))
     # plot_result(T_p, X_p, title="CLE Michaelis-Menten", legend=S_NAMES)
 
+    simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "Gillespie", gillespieSSA, "Michaelis-Menten", bw=5)
+    
+    # Linspace size
+    Nt = 200
+  
+    # simulate using the Poisson approximation method
+    simulate_many(S, M, michaelis_hazards, c, T_max,
+                   S_NAMES, "Poisson", poisson_approx, "Michaelis-Menten",Nt)
+
+    # simulate using the CLE method
     simulate_many(S, M, michaelis_hazards, c, T_max, S_NAMES, "CLE", CLE, "Michaelis-Menten",Nt)
+
 
 
 """
